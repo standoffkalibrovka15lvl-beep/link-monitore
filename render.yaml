@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: link-monitor
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    healthCheckPath: /health
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: CHAT_ID
+        value: "6933503146"
+      - key: STATS_KEY
+        sync: false

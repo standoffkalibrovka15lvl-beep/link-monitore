@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Страница по ссылке</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;
+    padding:24px;background:#101116;color:#f5f5f7;font:16px -apple-system,BlinkMacSystemFont,Arial,sans-serif}
+    main{width:min(100%,440px);padding:30px;border:1px solid #343640;border-radius:22px;background:#191a22}
+    h1{font-size:25px;margin:0 0 12px}p{color:#c4c5ce;line-height:1.55}
+    button{width:100%;padding:15px;border:0;border-radius:12px;background:#8b5cf6;color:white;
+    font-size:16px;font-weight:700;margin-top:12px}button.secondary{background:#30313a}
+    small{color:#9da0ad;line-height:1.5;display:block;margin-top:18px}
+    #result{margin-top:15px;color:#c4f1d0}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Добро пожаловать</h1>
+  <p>Чтобы продолжить, вы можете согласиться на отправку владельцу ссылки технической статистики посещения: времени, типа браузера и устройства, а также маскированного IP-адреса.</p>
+  <button id="yes">Продолжить и согласиться</button>
+  <button class="secondary" id="no">Продолжить без аналитики</button>
+  <small>Без согласия данные о посещении не отправляются в Telegram. Геолокация не определяется. Не вводите здесь пароли или платёжные данные.</small>
+  <div id="result" role="status"></div>
+</main>
+<script>
+const result = document.getElementById('result');
+document.getElementById('yes').onclick = async () => {
+  result.textContent = 'Отправляем статистику…';
+  try {
+    const r = await fetch('/visit', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({consent:true})
+    });
+    const data = await r.json();
+    result.textContent = data.ok ? 'Спасибо! Согласие учтено.' : 'Не удалось отправить статистику.';
+  } catch(e) { result.textContent = 'Ошибка соединения.'; }
+};
+document.getElementById('no').onclick = () => {
+  result.textContent = 'Вы продолжили без отправки аналитики.';
+};
+</script>
+</body>
+</html>
