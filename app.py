@@ -43,7 +43,30 @@ def telegram(message):
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return """
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Добро пожаловать</title>
+</head>
+<body style="background:#101116;color:white;font-family:Arial;text-align:center;padding:50px">
+<h1>Добро пожаловать!</h1>
+<p>Для отправки технической статистики посещения необходимо ваше согласие.</p>
+<button onclick="sendConsent()">Согласиться и продолжить</button>
+<button onclick="document.getElementById('status').innerText='Вы продолжили без аналитики'">Продолжить без аналитики</button>
+<p id="status"></p>
+<script>
+async function sendConsent(){
+ const r=await fetch('/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({consent:true})});
+ const d=await r.json();
+ document.getElementById('status').innerText=d.ok?'Спасибо!':'Ошибка отправки';
+}
+</script>
+</body>
+</html>
+"""
 
 @app.route("/visit", methods=["POST"])
 def visit():
